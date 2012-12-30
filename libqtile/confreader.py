@@ -77,11 +77,15 @@ class File(object):
             "auto_fullscreen",
         ]
 
-        # We delay importing here to avoid a circular import issue when
-        # testing.
-        from resources import default_config
+        config_is_invalid = False
+
         for option in config_options:
-            v = getattr(default_config, option)
-            if hasattr(config, option):
-                v = getattr(config, option)
-            setattr(self, option, v)
+            if not hasattr(config, option):
+                print("Error in config: %s is not defined" % option)
+                config_is_invalid = True
+
+        if config_is_invalid:
+            from resources import default_config as config
+
+        for option in config_options:
+            setattr(self, option, getattr(config, option))

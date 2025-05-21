@@ -272,11 +272,14 @@ class Keyboard(_Device):
         if not self.core.exclusive_client:
             # translate libinput keycode -> xkbcommon
             keycode = event.keycode + 8
-            layout_index = lib.xkb_state_key_get_layout(self.keyboard._ptr.xkb_state, keycode)
+            # Use the first layout when resolving keysyms so that keybindings
+            # remain consistent regardless of the active keyboard layout.  This
+            # mirrors the behaviour of the X11 backend where keycodes are
+            # grabbed based on the initial layout only.
             nsyms = lib.xkb_keymap_key_get_syms_by_level(
                 self.keyboard._ptr.keymap,
                 keycode,
-                layout_index,
+                0,
                 0,
                 xkb_keysym,
             )

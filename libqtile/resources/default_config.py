@@ -120,6 +120,14 @@ for i in groups:
         ]
     )
 
+# Example key bindings to glue and unglue groups
+keys.extend(
+    [
+        Key([mod], "g", lazy.group.glue_group("9"), desc="Glue group 9 to current"),
+        Key([mod], "u", lazy.group.unglue_group(), desc="Unglue windows from group"),
+    ]
+)
+
 layouts = [
     layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
     layout.Max(),

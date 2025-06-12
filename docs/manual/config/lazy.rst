@@ -100,6 +100,10 @@ Group functions
         Takes an optional ``toggle`` parameter (defaults to False).
         If this group is already on the screen, it does nothing by default;
         to toggle with the last used group instead, use ``toggle=True``.
+    * - ``lazy.group["group_name"].glue_group("other")``
+      - Move all windows from the group called ``other`` to ``group_name``.
+    * - ``lazy.group["group_name"].unglue_group()``
+      - Return windows glued to ``group_name`` back to their original group.
     * - ``lazy.layout.increase_ratio()``
       - Increase the space for master window at the expense of slave windows
     * - ``lazy.layout.decrease_ratio()``

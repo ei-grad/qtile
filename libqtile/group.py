@@ -35,6 +35,7 @@ from libqtile.command.base import CommandObject, expose_command
 from libqtile.log_utils import logger
 
 if TYPE_CHECKING:
+    from libqtile.backend.base import Window
     from libqtile.command.base import ItemT
 
 
@@ -67,6 +68,7 @@ class _Group(CommandObject):
         self.current_layout = None
         self.last_focused = None
         self.persist = persist
+        self.glue_map: dict[Window, _Group] = {}
 
     def _configure(self, layouts, floating_layout, qtile):
         self.screen = None
@@ -578,5 +580,31 @@ class _Group(CommandObject):
         self.label = label if label is not None else self.name
         hook.fire("changegroup")
 
+    @expose_command()
+    def glue_group(self, name: str) -> None:
+        """Move windows from another group to this one."""
+        assert self.qtile is not None
+        other = self.qtile.groups_map.get(name)
+        if not other or other is self:
+            return
+        for w in list(other.windows):
+            self.glue_map[w] = other
+            w.togroup(self.name)
+
+    @expose_command()
+    def unglue_group(self) -> None:
+        """Return windows glued to this group to their original group."""
+        for w, original in list(self.glue_map.items()):
+            if w.group is self:
+                w.togroup(original.name)
+            self.glue_map.pop(w, None)
+
     def __repr__(self):
         return f"<group.Group ({self.name!r})>"
+
+
+def _clear_glue(group: _Group, window) -> None:
+    group.glue_map.pop(window, None)
+
+
+hook.subscribe.group_window_remove(_clear_glue)

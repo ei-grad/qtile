@@ -5,6 +5,8 @@ Qtile x.xx.x, released xxxx-xx-xx:
         g_markup_escape_text(). Both transfer ownership to the caller, so every
         update of a widget with markup enabled leaked the rendered text and its
         attribute list
+      - Wayland: keep keybindings consistent regardless of the active keyboard
+        layout. Fixes #4259.
 
 Qtile 0.37.0, released 2026-08-07:
     * features
